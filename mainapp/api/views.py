@@ -6,8 +6,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from .serializers import InfanteSerializer, PropiedadSerializer, Servicios_emergenciaSerializer
 
-
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def obtener_propiedad(request, propiedad_id):
+    propiedad = get_object_or_404(Propiedad, id=propiedad_id)
+    serializer = PropiedadSerializer(propiedad, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -16,8 +20,6 @@ def obtener_servicios(request, propiedad_id):
     servicios = propiedad.servicios_emergencia.all()
     serializer = Servicios_emergenciaSerializer(servicios, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 
 
 @api_view(['GET'])
