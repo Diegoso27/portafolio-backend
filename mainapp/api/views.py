@@ -1,12 +1,21 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from mainapp.models import Propiedad, Infante
+from mainapp.models import Propiedad, Infante, Servicios_emergencia
 from rest_framework import status
 from rest_framework.response import Response
-from .serializers import InfanteSerializer, PropiedadSerializer
+from .serializers import InfanteSerializer, PropiedadSerializer, Servicios_emergenciaSerializer
 
 
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def obtener_servicios(request, propiedad_id):
+    propiedad = get_object_or_404(Propiedad, id=propiedad_id)
+    servicios = propiedad.servicios_emergencia.all()
+    serializer = Servicios_emergenciaSerializer(servicios, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
@@ -18,9 +27,6 @@ def detalle_infante(request, infante_id):
     infante = get_object_or_404(Infante, id=infante_id)
     serializer = InfanteSerializer(infante)
     return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
 
 
 
@@ -66,6 +72,10 @@ def registrar_propiedad(request):
         owner = request.data.get('owner')
         address = request.data.get('address')
         contact_number = request.data.get('contactNumber')
+        numero_asistencia_medica = request.data.get('centroMedico')
+        numero_bomberos = request.data.get('bomberos')
+        numero_carabineros = request.data.get('carabineros')
+
         asistente = request.user
         print(asistente)
 
@@ -77,7 +87,14 @@ def registrar_propiedad(request):
             contact_number = contact_number
         )
 
+        servicios = Servicios_emergencia.objects.create(
+            numero_bomberos = numero_bomberos,
+            numero_carabineros = numero_carabineros,
+            numero_asistencia_medica = numero_asistencia_medica
+        )
+
         propiedad_creada.asistente.add(asistente)
+        propiedad_creada.servicios_emergencia.add(servicios)
 
         return Response(status=status.HTTP_201_CREATED)
 

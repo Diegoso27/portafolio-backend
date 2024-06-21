@@ -12,6 +12,13 @@ class Infante(models.Model):
     alergias = models.CharField(max_length=200, null=True)
     antecendetes_medicos = models.CharField(max_length=300, null=True)
 
+class Servicios_emergencia(models.Model):
+
+    numero_bomberos = models.CharField(max_length=50)
+    numero_carabineros = models.CharField(max_length=50)
+    numero_asistencia_medica = models.CharField(max_length=50)
+
+
 class Propiedad(models.Model):
 
     owner = models.CharField(max_length=50)
@@ -19,14 +26,10 @@ class Propiedad(models.Model):
     contact_number = models.CharField(max_length=50)
     infantes = models.ManyToManyField(Infante, related_name='infante_propiedad', blank=True)  
     asistente = models.ManyToManyField(User, related_name='asistente_propiedad', blank=True)
+    servicios_emergencia = models.ManyToManyField(Servicios_emergencia, related_name='servicios_propiedad', blank=True)
+    
 
 
-class Institucion(models.Model):
-
-    institution_name = models.CharField(max_length=50)
-    intitution_type = models.CharField(max_length=50)
-    ubication = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=20)
 
 
 
